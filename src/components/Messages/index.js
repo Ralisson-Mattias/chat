@@ -38,7 +38,7 @@ const condition = {
     }
 }
 
-export function Messages({ item }) {
+export function Messages({ item, imageAction }) {
 
     const format_hour = moment(item.createdAt).format("HH:mm")
 
@@ -62,17 +62,16 @@ export function Messages({ item }) {
 
             {item.image &&
                 <View style={[styles.content, item.user._id === 1 ? condition.current_user.content : condition.other_user.content]}>
-                    <TouchableOpacity activeOpacity={.8}>
+                    <TouchableOpacity activeOpacity={.8} onPress={imageAction}>
                         <Image
                             source={{ uri: "https://cdn.pixabay.com/photo/2021/08/31/18/51/forest-6589852_960_720.jpg" }}
-                            style={styles.image}
+                            style={[styles.image]}
                         />
                     </TouchableOpacity>
                     <Text style={[styles.clockText, item.user._id === 1 ? condition.current_user.messageText : condition.other_user.messageText]}>{format_hour}</Text>
                 </View>
 
             }
-
 
         </View>
     )

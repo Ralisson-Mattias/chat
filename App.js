@@ -12,6 +12,7 @@ import "moment-timezone"
 import "moment/locale/pt-br"
 
 import uuid from 'react-native-uuid'
+import { ModalImage } from './src/components/ModalImage';
 
 
 const App = () => {
@@ -135,6 +136,10 @@ const App = () => {
     setMessage("")
   }
 
+  function handleClickImage(item) {
+
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <Header />
@@ -144,7 +149,7 @@ const App = () => {
         ref={listRef}
         keyExtractor={(item) => String(item._id)}
         data={messages}
-        renderItem={({ item }) => <Messages item={item} />}
+        renderItem={({ item }) => <Messages item={item} imageAction={() => handleClickImage(item)} />}
         contentContainerStyle={styles.contentContainerStyle}
         style={styles.list}
         initialScrollIndex={messages.length - 1}
@@ -155,6 +160,8 @@ const App = () => {
         value={message}
         onChangeText={text => setMessage(text)}
       />
+
+      {/* <ModalImage /> */}
     </SafeAreaView>
   );
 };
