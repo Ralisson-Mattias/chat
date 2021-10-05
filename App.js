@@ -93,23 +93,23 @@ const App = () => {
     },
     {
       _id: 8,
-      text: "Mensagem de teste 3",
       createdAt: moment().tz("America/Sao_Paulo"),
       user: {
-        _id: 1,
+        _id: 2,
         name: "Ralisson Mattias",
         avatar: "https://cdn.pixabay.com/photo/2018/01/15/07/51/woman-3083377_960_720.jpg"
-      }
+      },
+      image: "https://cdn.pixabay.com/photo/2021/08/31/18/51/forest-6589852_960_720.jpg"
     },
     {
       _id: 9,
-      text: "Mensagem de teste 3",
       createdAt: moment().tz("America/Sao_Paulo"),
       user: {
         _id: 1,
         name: "Ralisson Mattias",
         avatar: "https://cdn.pixabay.com/photo/2018/01/15/07/51/woman-3083377_960_720.jpg"
-      }
+      },
+      image: "https://cdn.pixabay.com/photo/2021/08/31/18/51/forest-6589852_960_720.jpg"
     },
   ])
 
