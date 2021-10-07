@@ -26,6 +26,7 @@ const { height } = Dimensions.get("window")
 const App = () => {
 
   const listRef = useRef(null)
+  const inputRef = useRef(null)
 
   const modalImageValue = useSharedValue(999)
   const selectMessageValue = useSharedValue(0)
@@ -174,6 +175,7 @@ const App = () => {
   }
 
   function handleSelectedMessage(item) {
+    inputRef?.current?.focus()
     setSelectedMessageInfos(item)
     selectMessageValue.value = withTiming(70, {
       duration: 500
@@ -181,6 +183,7 @@ const App = () => {
   }
 
   function handleCloseSelectedMessage() {
+    inputRef?.current?.blur()
     selectMessageValue.value = withTiming(0, {
       duration: 100
     })
@@ -217,6 +220,7 @@ const App = () => {
         sendAction={() => handleSend()}
         value={message}
         onChangeText={text => setMessage(text)}
+        inputRef={inputRef}
       />
 
       <ModalImage

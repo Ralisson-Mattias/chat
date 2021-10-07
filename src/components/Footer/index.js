@@ -11,7 +11,8 @@ import Animated, { useAnimatedStyle, useSharedValue, withDecay, withSpring, with
 export function Footer({
     sendAction,
     value,
-    onChangeText
+    onChangeText,
+    inputRef
 }) {
 
     const [isOpen, setIsOpen] = useState(false)
@@ -82,6 +83,7 @@ export function Footer({
                 </Animated.View>
 
                 <TextInput
+                    ref={inputRef}
                     placeholder="Digite uma mensagem"
                     style={styles.input}
                     value={value}

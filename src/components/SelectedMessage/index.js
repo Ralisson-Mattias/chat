@@ -19,9 +19,9 @@ export function SelectedMessage({ selectedMessageStyle, closeAction, infos }) {
 
             <View style={styles.textsArea}>
 
-                <Text style={styles.name}>{infos?.user?.name}</Text>
+                <Text style={styles.name}>{infos?.user?._id === 1 ? "Você" : infos?.user?.name}</Text>
 
-                {infos.image ?
+                {infos?.image ?
                     <View style={styles.row}>
                         <MaterialIcons name="photo" size={20} />
                         <Text style={[styles.message, { marginLeft: 5 }]} numberOfLines={1}>Foto</Text>
@@ -32,10 +32,13 @@ export function SelectedMessage({ selectedMessageStyle, closeAction, infos }) {
 
             </View>
 
-            <Image
-                source={{ uri: infos?.image }}
-                style={styles.previewImage}
-            />
+            {infos?.image &&
+                <Image
+                    source={{ uri: infos?.image }}
+                    style={styles.previewImage}
+                />
+            }
+
 
             <GestureHandlerRootView>
                 <BorderlessButton onPress={closeAction}>
