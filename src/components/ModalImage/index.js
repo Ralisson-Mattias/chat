@@ -1,16 +1,20 @@
 import React from "react"
 
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native"
+import Animated from "react-native-reanimated"
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons"
 
-// import { styles } from "./styles"
 
-export function ModalImage() {
+export function ModalImage({
+    modaImageStyle,
+    closeAction,
+    image
+}) {
     return (
-        <View style={styles.container}>
+        <Animated.View style={[styles.container, modaImageStyle]}>
 
             <View style={styles.header}>
-                <TouchableOpacity activeOpacity={.8} style={styles.button}>
+                <TouchableOpacity activeOpacity={.8} style={styles.button} onPress={closeAction}>
                     <MaterialCommunityIcons name="close" color="#fff" size={20} />
                 </TouchableOpacity>
 
@@ -19,24 +23,34 @@ export function ModalImage() {
                 </TouchableOpacity>
             </View>
 
-            <Image
-                source={{ uri: "https://cdn.pixabay.com/photo/2021/08/31/18/51/forest-6589852_960_720.jpg" }}
-                style={styles.image}
-                resizeMode="cover"
-            />
+            <View style={styles.containerImage}>
+                <Image
+                    source={{ uri: image }}
+                    style={styles.image}
+                    resizeMode="cover"
+                />
+            </View>
 
-        </View>
+
+        </Animated.View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+        position: "absolute",
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: "#fff"
     },
     header: {
         padding: 20,
         flexDirection: "row",
-        justifyContent: "space-between"
+        justifyContent: "space-between",
+        backgroundColor: "#fff"
     },
     button: {
         backgroundColor: "#0755DB",
@@ -46,7 +60,12 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderRadius: 20
     },
+    containerImage: {
+        flex: 1,
+        justifyContent: "center"
+    },
     image: {
-        flex: 1
-    }
+        height: 300,
+        width: "100%",
+    },
 })

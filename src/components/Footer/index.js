@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        maxHeight: 70
+        maxHeight: 70,
     },
     button: {
         width: 40,

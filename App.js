@@ -1,7 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   FlatList,
-  SafeAreaView, StyleSheet, Text
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  PanResponder,
+  Dimensions
 } from 'react-native';
 import { Footer } from './src/components/Footer';
 import { Header } from './src/components/Header';
@@ -13,11 +17,21 @@ import "moment/locale/pt-br"
 
 import uuid from 'react-native-uuid'
 import { ModalImage } from './src/components/ModalImage';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import { SelectedMessage } from './src/components/SelectedMessage';
+
+const { height } = Dimensions.get("window")
 
 
 const App = () => {
 
   const listRef = useRef(null)
+
+  const modalImageValue = useSharedValue(999)
+  const selectMessageValue = useSharedValue(0)
+
+  const [selectedModalImage, setSelectedModalImage] = useState(null)
+  const [selectedMessageInfos, setSelectedMessageInfos] = useState(null)
 
   const [message, setMessage] = useState("")
 
@@ -97,7 +111,7 @@ const App = () => {
       createdAt: moment().tz("America/Sao_Paulo"),
       user: {
         _id: 2,
-        name: "Ralisson Mattias",
+        name: "Felipe José",
         avatar: "https://cdn.pixabay.com/photo/2018/01/15/07/51/woman-3083377_960_720.jpg"
       },
       image: "https://cdn.pixabay.com/photo/2021/08/31/18/51/forest-6589852_960_720.jpg"
@@ -110,9 +124,21 @@ const App = () => {
         name: "Ralisson Mattias",
         avatar: "https://cdn.pixabay.com/photo/2018/01/15/07/51/woman-3083377_960_720.jpg"
       },
-      image: "https://cdn.pixabay.com/photo/2021/08/31/18/51/forest-6589852_960_720.jpg"
+      image: "https://cdn.pixabay.com/photo/2021/08/06/05/04/mountain-6525356_960_720.jpg"
     },
   ])
+
+  const modalImageStyle = useAnimatedStyle(() => {
+    return {
+      top: modalImageValue.value
+    }
+  })
+
+  const selectedMessageStyle = useAnimatedStyle(() => {
+    return {
+      bottom: selectMessageValue.value
+    }
+  })
 
 
   function handleSend() {
@@ -136,8 +162,28 @@ const App = () => {
     setMessage("")
   }
 
-  function handleClickImage(item) {
+  function handleClickImage(item, e) {
+    modalImageValue.value = withTiming(0, { duration: 600 })
+    setSelectedModalImage(item.image)
+  }
 
+  function closeModalImage() {
+    modalImageValue.value = withTiming(4000, {
+      duration: 800
+    })
+  }
+
+  function handleSelectedMessage(item) {
+    setSelectedMessageInfos(item)
+    selectMessageValue.value = withTiming(70, {
+      duration: 500
+    })
+  }
+
+  function handleCloseSelectedMessage() {
+    selectMessageValue.value = withTiming(0, {
+      duration: 100
+    })
   }
 
   return (
@@ -149,11 +195,23 @@ const App = () => {
         ref={listRef}
         keyExtractor={(item) => String(item._id)}
         data={messages}
-        renderItem={({ item }) => <Messages item={item} imageAction={() => handleClickImage(item)} />}
+        renderItem={({ item }) => <Messages
+          item={item}
+          imageAction={(e) => handleClickImage(item, e)}
+          onSwipeableWillClose={() => handleSelectedMessage(item)}
+        />}
         contentContainerStyle={styles.contentContainerStyle}
         style={styles.list}
         initialScrollIndex={messages.length - 1}
       />
+
+
+      <SelectedMessage
+        selectedMessageStyle={selectedMessageStyle}
+        closeAction={() => handleCloseSelectedMessage()}
+        infos={selectedMessageInfos}
+      />
+
 
       <Footer
         sendAction={() => handleSend()}
@@ -161,7 +219,12 @@ const App = () => {
         onChangeText={text => setMessage(text)}
       />
 
-      {/* <ModalImage /> */}
+      <ModalImage
+        modaImageStyle={modalImageStyle}
+        closeAction={closeModalImage}
+        image={selectedModalImage}
+      />
+
     </SafeAreaView>
   );
 };
@@ -173,8 +236,7 @@ const styles = StyleSheet.create({
   },
   contentContainerStyle: {
     justifyContent: "flex-end",
-    paddingHorizontal: 20,
-    flexGrow: 1
+    flexGrow: 1,
   },
   list: {
     flex: 1,
