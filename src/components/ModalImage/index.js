@@ -1,8 +1,11 @@
+import { useNavigation, useRoute } from "@react-navigation/native"
 import React from "react"
 
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native"
 import Animated from "react-native-reanimated"
+import { SharedElement } from "react-native-shared-element"
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons"
+
 
 
 export function ModalImage({
@@ -10,11 +13,16 @@ export function ModalImage({
     closeAction,
     image
 }) {
+
+    const navigation = useNavigation()
+    const route = useRoute()
+    const params = route?.params
+
     return (
         <Animated.View style={[styles.container, modaImageStyle]}>
 
             <View style={styles.header}>
-                <TouchableOpacity activeOpacity={.8} style={styles.button} onPress={closeAction}>
+                <TouchableOpacity activeOpacity={.8} style={styles.button} onPress={() => navigation.goBack()}>
                     <MaterialCommunityIcons name="close" color="#fff" size={20} />
                 </TouchableOpacity>
 
@@ -23,9 +31,11 @@ export function ModalImage({
                 </TouchableOpacity>
             </View>
 
+
             <View style={styles.containerImage}>
+
                 <Image
-                    source={{ uri: image }}
+                    source={{ uri: params?.image }}
                     style={styles.image}
                     resizeMode="cover"
                 />
