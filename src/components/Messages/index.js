@@ -5,6 +5,7 @@ import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {GestureHandlerRootView, Swipeable} from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
 import {SharedElement} from 'react-navigation-shared-element';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const condition = {
   current_user: {
@@ -41,7 +42,14 @@ const condition = {
   },
 };
 
-export function Messages({item, imageAction, onSwipeableWillClose}) {
+export function Messages({
+  item,
+  imageAction,
+  onSwipeableWillClose,
+  quickReplieClick,
+  quickReplieSelected,
+  quickReplieIndicatorStyle,
+}) {
   const format_hour = moment(item.createdAt).format('HH:mm');
 
   return (
@@ -64,6 +72,17 @@ export function Messages({item, imageAction, onSwipeableWillClose}) {
               }}
               style={styles.avatar}
             />
+          )}
+
+          {item.user._id === 1 && quickReplieSelected === item._id && (
+            <Animated.View
+              style={[quickReplieIndicatorStyle, {marginHorizontal: 10}]}>
+              <MaterialIcons
+                name="radio-button-checked"
+                size={30}
+                color="#0755DB"
+              />
+            </Animated.View>
           )}
 
           {!item.image && !item.quickReplie && (
@@ -122,7 +141,9 @@ export function Messages({item, imageAction, onSwipeableWillClose}) {
 
           {item.quickReplie && (
             <View style={[styles.content, styles.quickReplieContainer]}>
-              <View
+              <TouchableOpacity
+                onPress={quickReplieClick}
+                activeOpacity={0.8}
                 style={[
                   styles.quickReplieContent,
                   {
@@ -132,18 +153,54 @@ export function Messages({item, imageAction, onSwipeableWillClose}) {
                         : condition.other_user.quickReplieColors[0],
                   },
                 ]}>
-                <Text style={styles.title}>
-                  {item.quickReplie.user._id === 1 ? 'Você' : item.user.name}
-                </Text>
-                <Text numberOfLines={1} style={styles.messageText}>
-                  {item.quickReplie.text}
-                </Text>
-              </View>
+                <View style={{flex: 2}}>
+                  <Text style={styles.title}>
+                    {item.quickReplie.user._id === 1
+                      ? 'Você'
+                      : item.quickReplie.user.name}
+                  </Text>
+
+                  {item.quickReplie.image ? (
+                    <View style={styles.row}>
+                      <MaterialIcons name="photo" size={20} />
+                      <Text
+                        style={[styles.message, {marginLeft: 5}]}
+                        numberOfLines={1}>
+                        Foto
+                      </Text>
+                    </View>
+                  ) : (
+                    <Text numberOfLines={1} style={styles.messageText}>
+                      {item.quickReplie.text}
+                    </Text>
+                  )}
+                </View>
+
+                <View style={{flex: 1}}>
+                  {item?.quickReplie?.image && (
+                    <Image
+                      source={{uri: item?.quickReplie?.image}}
+                      style={styles.previewImage}
+                    />
+                  )}
+                </View>
+              </TouchableOpacity>
 
               <Text style={(styles.messageText, {marginTop: 10})}>
                 {item.text}
               </Text>
             </View>
+          )}
+
+          {item.user._id !== 1 && quickReplieSelected === item._id && (
+            <Animated.View
+              style={[quickReplieIndicatorStyle, {marginHorizontal: 10}]}>
+              <MaterialIcons
+                name="radio-button-checked"
+                size={30}
+                color="#0755DB"
+              />
+            </Animated.View>
           )}
         </View>
       </Swipeable>
@@ -188,7 +245,7 @@ const styles = StyleSheet.create({
   },
   quickReplieContainer: {
     backgroundColor: '#fff',
-    width: '55%',
+    width: '60%',
   },
   quickReplieContent: {
     borderLeftWidth: 5,
@@ -197,8 +254,20 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     paddingVertical: 8,
     backgroundColor: 'rgba(7,85,219, 0.1)',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   title: {
     fontWeight: 'bold',
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  previewImage: {
+    width: 40,
+    height: 40,
+    marginLeft: 20,
   },
 });

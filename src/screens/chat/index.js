@@ -21,6 +21,9 @@ import {ModalImage} from '../../components/ModalImage';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
+  withDecay,
+  withDelay,
+  withRepeat,
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
@@ -37,9 +40,11 @@ const Chat = () => {
 
   const modalImageValue = useSharedValue(999);
   const selectMessageValue = useSharedValue(0);
+  const quickReplieIndicator = useSharedValue(0);
 
   const [selectedModalImage, setSelectedModalImage] = useState(null);
   const [selectedMessageInfos, setSelectedMessageInfos] = useState(null);
+  const [quickReplieSelected, setQuickReplieSelected] = useState(null);
 
   const [message, setMessage] = useState('');
 
@@ -159,6 +164,12 @@ const Chat = () => {
     };
   });
 
+  const quickRepliteIndicatorStyle = useAnimatedStyle(() => {
+    return {
+      opacity: quickReplieIndicator.value,
+    };
+  });
+
   function handleSend() {
     const id = uuid.v4();
 
@@ -180,6 +191,8 @@ const Chat = () => {
         quickReplie: selectedMessageInfos,
       };
     }
+
+    console.log(newMessage);
 
     handleCloseSelectedMessage();
     listRef.current.scrollToIndex({index: messages.length - 1});
@@ -213,6 +226,31 @@ const Chat = () => {
     selectMessageValue.value = withTiming(0, {
       duration: 100,
     });
+  }
+
+  function handleClickReplie(item, index) {
+    const indexOf = messages.findIndex(el => {
+      return el._id === item.quickReplie._id;
+    });
+
+    setQuickReplieSelected(item.quickReplie._id);
+
+    quickReplieIndicator.value = withDelay(
+      200,
+      withTiming(
+        1,
+        {
+          duration: 2000,
+        },
+        () => {
+          quickReplieIndicator.value = withTiming(0, {
+            duration: 2000,
+          });
+        },
+      ),
+    );
+
+    listRef.current.scrollToIndex({index: indexOf});
   }
 
   function scrollToIndexFailed(error) {
@@ -252,11 +290,14 @@ const Chat = () => {
         ref={listRef}
         keyExtractor={item => String(item._id)}
         data={messages}
-        renderItem={({item}) => (
+        renderItem={({item, index}) => (
           <Messages
             item={item}
             imageAction={e => handleClickImage(item, e)}
             onSwipeableWillClose={() => handleSelectedMessage(item)}
+            quickReplieClick={() => handleClickReplie(item, index)}
+            quickReplieIndicatorStyle={quickRepliteIndicatorStyle}
+            quickReplieSelected={quickReplieSelected}
           />
         )}
         contentContainerStyle={[
